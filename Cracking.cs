@@ -43,7 +43,7 @@ namespace PasswordCrackerServiceConsumer
             while (dictChunk != null)
             {
                 Console.WriteLine("Got a chunk: " + dictChunk.Count + " first: " + dictChunk[0] + ", last: " + dictChunk[dictChunk.Count - 1]);
-                var partitions = Partitioner.Create(0, dictChunk.Count, 1000);
+                var partitions = Partitioner.Create(0, dictChunk.Count, 2000);
                 List<string> chunk = dictChunk;
                 Parallel.ForEach(partitions, range =>
                 {
