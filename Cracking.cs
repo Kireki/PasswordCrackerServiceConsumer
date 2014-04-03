@@ -1,5 +1,6 @@
 ﻿using System.Collections.Concurrent;
 using System.Diagnostics;
+using System.IO;
 using System.Threading.Tasks;
 using System;
 using System.Collections.Generic;
@@ -21,7 +22,16 @@ namespace PasswordCrackerServiceConsumer
             sw.Start();
             CrackerSoapClient cracker = new CrackerSoapClient();
             Console.WriteLine("Initialized cracker web-service.");
-            List<UserInfo> userInfos = cracker.GetPasswordList();
+            List<UserInfo> userInfos = new List<UserInfo>();
+            try
+            {
+                userInfos = cracker.GetPasswordList();
+            }
+            catch (Exception)
+            {
+                Console.WriteLine("Couldn't get the password file. Check if the service really has it and you can connect to it.");
+                return;
+            }
             Console.WriteLine("Got " + userInfos.Count + " credentials to process. Usernames: ");
             foreach (var userInfo in userInfos)
             {
@@ -32,13 +42,14 @@ namespace PasswordCrackerServiceConsumer
             List<string> dictChunk = cracker.GetDictionaryChunk();
             while (dictChunk != null)
             {
-                Console.WriteLine("Got a chunk: " + dictChunk.Count + " first: " + dictChunk[0] + " last: " + dictChunk[dictChunk.Count - 1]);
+                Console.WriteLine("Got a chunk: " + dictChunk.Count + " first: " + dictChunk[0] + ", last: " + dictChunk[dictChunk.Count - 1]);
                 var partitions = Partitioner.Create(0, dictChunk.Count, 1000);
                 List<string> chunk = dictChunk;
                 Parallel.ForEach(partitions, range =>
                 {
                     for (int i = range.Item1; i < range.Item2; i++)
                     {
+                        Console.WriteLine("\r{0}% ", i - range.Item1 + " words processed.");
                         IEnumerable<UserInfoClearText> partialResult = CheckWordWithVariations(chunk[i], userInfos);
                         result.AddRange(partialResult);
                     }
@@ -115,7 +126,15 @@ namespace PasswordCrackerServiceConsumer
             HashAlgorithm messageDigest = new SHA1CryptoServiceProvider();
             char[] charArray = possiblePassword.ToCharArray();
             byte[] passwordAsBytes = Array.ConvertAll(charArray, StringUtilities.GetConverter());
-            byte[] encryptedPassword = messageDigest.ComputeHash(passwordAsBytes);
+            byte[] encryptedPassword = null;
+            try
+            {
+                encryptedPassword = messageDigest.ComputeHash(passwordAsBytes);
+            }
+            catch (OutOfMemoryException)
+            {
+                Console.WriteLine("Couldn't handle the load");
+            }
             //string encryptedPasswordBase64 = System.Convert.ToBase64String(encryptedPassword);
 
             List<UserInfoClearText> results = new List<UserInfoClearText>();
