@@ -1,0 +1,203 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wsdl:definitions xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:tm="http://microsoft.com/wsdl/mime/textMatching/" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" xmlns:tns="http://www.tempuri.org" xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" xmlns:s="http://www.w3.org/2001/XMLSchema" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" targetNamespace="http://www.tempuri.org" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+  <wsdl:types>
+    <s:schema elementFormDefault="qualified" targetNamespace="http://www.tempuri.org">
+      <s:element name="GetPasswordList">
+        <s:complexType />
+      </s:element>
+      <s:element name="GetPasswordListResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GetPasswordListResult" type="tns:ArrayOfUserInfo" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:complexType name="ArrayOfUserInfo">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="unbounded" name="UserInfo" nillable="true" type="tns:UserInfo" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="UserInfo">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="1" name="Username" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="EncryptedPasswordBase64" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="EncryptedPassword" type="s:base64Binary" />
+        </s:sequence>
+      </s:complexType>
+      <s:element name="GetDictionaryChunk">
+        <s:complexType />
+      </s:element>
+      <s:element name="GetDictionaryChunkResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GetDictionaryChunkResult" type="tns:ArrayOfString" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:complexType name="ArrayOfString">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="unbounded" name="string" nillable="true" type="s:string" />
+        </s:sequence>
+      </s:complexType>
+      <s:element name="LogIt">
+        <s:complexType />
+      </s:element>
+      <s:element name="LogItResponse">
+        <s:complexType />
+      </s:element>
+      <s:element name="LogResults">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="result" type="tns:ArrayOfUserInfoClearText" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:complexType name="ArrayOfUserInfoClearText">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="unbounded" name="UserInfoClearText" nillable="true" type="tns:UserInfoClearText" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="UserInfoClearText">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="1" name="UserName" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Password" type="s:string" />
+        </s:sequence>
+      </s:complexType>
+      <s:element name="LogResultsResponse">
+        <s:complexType />
+      </s:element>
+    </s:schema>
+  </wsdl:types>
+  <wsdl:message name="GetPasswordListSoapIn">
+    <wsdl:part name="parameters" element="tns:GetPasswordList" />
+  </wsdl:message>
+  <wsdl:message name="GetPasswordListSoapOut">
+    <wsdl:part name="parameters" element="tns:GetPasswordListResponse" />
+  </wsdl:message>
+  <wsdl:message name="GetDictionaryChunkSoapIn">
+    <wsdl:part name="parameters" element="tns:GetDictionaryChunk" />
+  </wsdl:message>
+  <wsdl:message name="GetDictionaryChunkSoapOut">
+    <wsdl:part name="parameters" element="tns:GetDictionaryChunkResponse" />
+  </wsdl:message>
+  <wsdl:message name="LogItSoapIn">
+    <wsdl:part name="parameters" element="tns:LogIt" />
+  </wsdl:message>
+  <wsdl:message name="LogItSoapOut">
+    <wsdl:part name="parameters" element="tns:LogItResponse" />
+  </wsdl:message>
+  <wsdl:message name="LogResultsSoapIn">
+    <wsdl:part name="parameters" element="tns:LogResults" />
+  </wsdl:message>
+  <wsdl:message name="LogResultsSoapOut">
+    <wsdl:part name="parameters" element="tns:LogResultsResponse" />
+  </wsdl:message>
+  <wsdl:portType name="CrackerSoap">
+    <wsdl:operation name="GetPasswordList">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Get the list of usernames and encrypted passwords.</wsdl:documentation>
+      <wsdl:input message="tns:GetPasswordListSoapIn" />
+      <wsdl:output message="tns:GetPasswordListSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetDictionaryChunk">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Gets a single dictionary chunk from the container, removes it and sends it to client.</wsdl:documentation>
+      <wsdl:input message="tns:GetDictionaryChunkSoapIn" />
+      <wsdl:output message="tns:GetDictionaryChunkSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="LogIt">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Logs the chunks inside the container for debugging purposes.</wsdl:documentation>
+      <wsdl:input message="tns:LogItSoapIn" />
+      <wsdl:output message="tns:LogItSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="LogResults">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Logs the username and password received from client in clear text.</wsdl:documentation>
+      <wsdl:input message="tns:LogResultsSoapIn" />
+      <wsdl:output message="tns:LogResultsSoapOut" />
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="CrackerSoap" type="tns:CrackerSoap">
+    <soap:binding transport="http://schemas.xmlsoap.org/soap/http" />
+    <wsdl:operation name="GetPasswordList">
+      <soap:operation soapAction="http://www.tempuri.org/GetPasswordList" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetDictionaryChunk">
+      <soap:operation soapAction="http://www.tempuri.org/GetDictionaryChunk" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="LogIt">
+      <soap:operation soapAction="http://www.tempuri.org/LogIt" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="LogResults">
+      <soap:operation soapAction="http://www.tempuri.org/LogResults" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:binding name="CrackerSoap12" type="tns:CrackerSoap">
+    <soap12:binding transport="http://schemas.xmlsoap.org/soap/http" />
+    <wsdl:operation name="GetPasswordList">
+      <soap12:operation soapAction="http://www.tempuri.org/GetPasswordList" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetDictionaryChunk">
+      <soap12:operation soapAction="http://www.tempuri.org/GetDictionaryChunk" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="LogIt">
+      <soap12:operation soapAction="http://www.tempuri.org/LogIt" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="LogResults">
+      <soap12:operation soapAction="http://www.tempuri.org/LogResults" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="Cracker">
+    <wsdl:port name="CrackerSoap" binding="tns:CrackerSoap">
+      <soap:address location="http://10.154.2.26:65080/Cracker.asmx" />
+    </wsdl:port>
+    <wsdl:port name="CrackerSoap12" binding="tns:CrackerSoap12">
+      <soap12:address location="http://10.154.2.26:65080/Cracker.asmx" />
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>
