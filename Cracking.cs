@@ -1,6 +1,5 @@
 ﻿using System.Collections.Concurrent;
 using System.Diagnostics;
-using System.IO;
 using System.Threading.Tasks;
 using System;
 using System.Collections.Generic;
@@ -22,7 +21,7 @@ namespace PasswordCrackerServiceConsumer
             sw.Start();
             CrackerSoapClient cracker = new CrackerSoapClient();
             Console.WriteLine("Initialized cracker web-service.");
-            List<UserInfo> userInfos = new List<UserInfo>();
+            List<UserInfo> userInfos;
             try
             {
                 userInfos = cracker.GetPasswordList();
@@ -40,20 +39,24 @@ namespace PasswordCrackerServiceConsumer
             Console.WriteLine();
             List<UserInfoClearText> result = new List<UserInfoClearText>();
             List<string> dictChunk = cracker.GetDictionaryChunk();
+            double[] processedWords = {0};
             while (dictChunk != null)
             {
-                Console.WriteLine("Got a chunk: " + dictChunk.Count + " first: " + dictChunk[0] + ", last: " + dictChunk[dictChunk.Count - 1]);
+                Console.WriteLine("\nGot a chunk: " + dictChunk.Count + ". First: " + dictChunk[0] + ", last: " + dictChunk[dictChunk.Count - 1]);
                 var partitions = Partitioner.Create(0, dictChunk.Count, 2000);
                 List<string> chunk = dictChunk;
                 Parallel.ForEach(partitions, range =>
                 {
                     for (int i = range.Item1; i < range.Item2; i++)
                     {
-                        Console.WriteLine("\r{0}% ", i - range.Item1 + " words processed.");
+                        processedWords[0]++;
+                        Console.Write("\r{0}% of words processed.", Math.Ceiling(processedWords[0]/chunk.Count * 100));
                         IEnumerable<UserInfoClearText> partialResult = CheckWordWithVariations(chunk[i], userInfos);
                         result.AddRange(partialResult);
                     }
                 });
+                processedWords[0] = 0;
+                Console.WriteLine("Done!");
                 dictChunk = cracker.GetDictionaryChunk();
             }
             cracker.LogResults(result);
@@ -152,7 +155,7 @@ namespace PasswordCrackerServiceConsumer
                         Password = possiblePassword
                     };
                     results.Add(clearTextInfo);
-                    Console.WriteLine(userInfo.Username + " " + possiblePassword);
+                    Console.WriteLine("\nFound: " + userInfo.Username + " " + possiblePassword);
                 }
             }
             return results;
