@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 
 namespace PasswordCrackerServiceConsumer
 {
@@ -9,8 +10,11 @@ namespace PasswordCrackerServiceConsumer
         /// </summary>
         static void Main()
         {
+            Stopwatch sw = new Stopwatch();
+            sw.Start();
             Cracking cracker = new Cracking();
             cracker.RunCracking();
+            Console.WriteLine("Time elapsed: {0}", sw.Elapsed);
             Console.ReadLine();
         }
     }

@@ -22,6 +22,8 @@ namespace PasswordCrackerServiceConsumer.Cracker {
         [System.NonSerializedAttribute()]
         private System.Runtime.Serialization.ExtensionDataObject extensionDataField;
         
+        private bool IsDecryptedField;
+        
         [System.Runtime.Serialization.OptionalFieldAttribute()]
         private string UsernameField;
         
@@ -41,6 +43,19 @@ namespace PasswordCrackerServiceConsumer.Cracker {
             }
         }
         
+        [System.Runtime.Serialization.DataMemberAttribute(IsRequired=true)]
+        public bool IsDecrypted {
+            get {
+                return this.IsDecryptedField;
+            }
+            set {
+                if ((this.IsDecryptedField.Equals(value) != true)) {
+                    this.IsDecryptedField = value;
+                    this.RaisePropertyChanged("IsDecrypted");
+                }
+            }
+        }
+        
         [System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue=false)]
         public string Username {
             get {
@@ -54,7 +69,7 @@ namespace PasswordCrackerServiceConsumer.Cracker {
             }
         }
         
-        [System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue=false, Order=1)]
+        [System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue=false, Order=2)]
         public string EncryptedPasswordBase64 {
             get {
                 return this.EncryptedPasswordBase64Field;
@@ -67,7 +82,7 @@ namespace PasswordCrackerServiceConsumer.Cracker {
             }
         }
         
-        [System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue=false, Order=2)]
+        [System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue=false, Order=3)]
         public byte[] EncryptedPassword {
             get {
                 return this.EncryptedPasswordField;
@@ -188,6 +203,19 @@ namespace PasswordCrackerServiceConsumer.Cracker {
         
         [System.ServiceModel.OperationContractAttribute(Action="http://www.tempuri.org/LogResults", ReplyAction="*")]
         System.Threading.Tasks.Task<PasswordCrackerServiceConsumer.Cracker.LogResultsResponse> LogResultsAsync(PasswordCrackerServiceConsumer.Cracker.LogResultsRequest request);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://www.tempuri.org/Reset", ReplyAction="*")]
+        void Reset();
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://www.tempuri.org/Reset", ReplyAction="*")]
+        System.Threading.Tasks.Task ResetAsync();
+        
+        // CODEGEN: Generating message contract since element name name from namespace http://www.tempuri.org is not marked nillable
+        [System.ServiceModel.OperationContractAttribute(Action="http://www.tempuri.org/Decrypted", ReplyAction="*")]
+        PasswordCrackerServiceConsumer.Cracker.DecryptedResponse Decrypted(PasswordCrackerServiceConsumer.Cracker.DecryptedRequest request);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://www.tempuri.org/Decrypted", ReplyAction="*")]
+        System.Threading.Tasks.Task<PasswordCrackerServiceConsumer.Cracker.DecryptedResponse> DecryptedAsync(PasswordCrackerServiceConsumer.Cracker.DecryptedRequest request);
     }
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
@@ -373,6 +401,67 @@ namespace PasswordCrackerServiceConsumer.Cracker {
         }
     }
     
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
+    [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
+    [System.ServiceModel.MessageContractAttribute(IsWrapped=false)]
+    public partial class DecryptedRequest {
+        
+        [System.ServiceModel.MessageBodyMemberAttribute(Name="Decrypted", Namespace="http://www.tempuri.org", Order=0)]
+        public PasswordCrackerServiceConsumer.Cracker.DecryptedRequestBody Body;
+        
+        public DecryptedRequest() {
+        }
+        
+        public DecryptedRequest(PasswordCrackerServiceConsumer.Cracker.DecryptedRequestBody Body) {
+            this.Body = Body;
+        }
+    }
+    
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
+    [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
+    [System.Runtime.Serialization.DataContractAttribute(Namespace="http://www.tempuri.org")]
+    public partial class DecryptedRequestBody {
+        
+        [System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue=false, Order=0)]
+        public string name;
+        
+        public DecryptedRequestBody() {
+        }
+        
+        public DecryptedRequestBody(string name) {
+            this.name = name;
+        }
+    }
+    
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
+    [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
+    [System.ServiceModel.MessageContractAttribute(IsWrapped=false)]
+    public partial class DecryptedResponse {
+        
+        [System.ServiceModel.MessageBodyMemberAttribute(Name="DecryptedResponse", Namespace="http://www.tempuri.org", Order=0)]
+        public PasswordCrackerServiceConsumer.Cracker.DecryptedResponseBody Body;
+        
+        public DecryptedResponse() {
+        }
+        
+        public DecryptedResponse(PasswordCrackerServiceConsumer.Cracker.DecryptedResponseBody Body) {
+            this.Body = Body;
+        }
+    }
+    
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
+    [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
+    [System.Runtime.Serialization.DataContractAttribute()]
+    public partial class DecryptedResponseBody {
+        
+        public DecryptedResponseBody() {
+        }
+    }
+    
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
     public interface CrackerSoapChannel : PasswordCrackerServiceConsumer.Cracker.CrackerSoap, System.ServiceModel.IClientChannel {
     }
@@ -476,6 +565,38 @@ namespace PasswordCrackerServiceConsumer.Cracker {
             inValue.Body = new PasswordCrackerServiceConsumer.Cracker.LogResultsRequestBody();
             inValue.Body.result = result;
             return ((PasswordCrackerServiceConsumer.Cracker.CrackerSoap)(this)).LogResultsAsync(inValue);
+        }
+        
+        public void Reset() {
+            base.Channel.Reset();
+        }
+        
+        public System.Threading.Tasks.Task ResetAsync() {
+            return base.Channel.ResetAsync();
+        }
+        
+        [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
+        PasswordCrackerServiceConsumer.Cracker.DecryptedResponse PasswordCrackerServiceConsumer.Cracker.CrackerSoap.Decrypted(PasswordCrackerServiceConsumer.Cracker.DecryptedRequest request) {
+            return base.Channel.Decrypted(request);
+        }
+        
+        public void Decrypted(string name) {
+            PasswordCrackerServiceConsumer.Cracker.DecryptedRequest inValue = new PasswordCrackerServiceConsumer.Cracker.DecryptedRequest();
+            inValue.Body = new PasswordCrackerServiceConsumer.Cracker.DecryptedRequestBody();
+            inValue.Body.name = name;
+            PasswordCrackerServiceConsumer.Cracker.DecryptedResponse retVal = ((PasswordCrackerServiceConsumer.Cracker.CrackerSoap)(this)).Decrypted(inValue);
+        }
+        
+        [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
+        System.Threading.Tasks.Task<PasswordCrackerServiceConsumer.Cracker.DecryptedResponse> PasswordCrackerServiceConsumer.Cracker.CrackerSoap.DecryptedAsync(PasswordCrackerServiceConsumer.Cracker.DecryptedRequest request) {
+            return base.Channel.DecryptedAsync(request);
+        }
+        
+        public System.Threading.Tasks.Task<PasswordCrackerServiceConsumer.Cracker.DecryptedResponse> DecryptedAsync(string name) {
+            PasswordCrackerServiceConsumer.Cracker.DecryptedRequest inValue = new PasswordCrackerServiceConsumer.Cracker.DecryptedRequest();
+            inValue.Body = new PasswordCrackerServiceConsumer.Cracker.DecryptedRequestBody();
+            inValue.Body.name = name;
+            return ((PasswordCrackerServiceConsumer.Cracker.CrackerSoap)(this)).DecryptedAsync(inValue);
         }
     }
 }

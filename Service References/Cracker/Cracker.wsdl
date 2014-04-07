@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<wsdl:definitions xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" xmlns:tns="http://www.tempuri.org" xmlns:s="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:tm="http://microsoft.com/wsdl/mime/textMatching/" xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" targetNamespace="http://www.tempuri.org" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+<wsdl:definitions xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:tm="http://microsoft.com/wsdl/mime/textMatching/" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" xmlns:tns="http://www.tempuri.org" xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" xmlns:s="http://www.w3.org/2001/XMLSchema" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" targetNamespace="http://www.tempuri.org" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
   <wsdl:types>
     <s:schema elementFormDefault="qualified" targetNamespace="http://www.tempuri.org">
       <s:element name="GetPasswordList">
@@ -19,6 +19,7 @@
       </s:complexType>
       <s:complexType name="UserInfo">
         <s:sequence>
+          <s:element minOccurs="1" maxOccurs="1" name="IsDecrypted" type="s:boolean" />
           <s:element minOccurs="0" maxOccurs="1" name="Username" type="s:string" />
           <s:element minOccurs="0" maxOccurs="1" name="EncryptedPasswordBase64" type="s:string" />
           <s:element minOccurs="0" maxOccurs="1" name="EncryptedPassword" type="s:base64Binary" />
@@ -66,6 +67,22 @@
       <s:element name="LogResultsResponse">
         <s:complexType />
       </s:element>
+      <s:element name="Reset">
+        <s:complexType />
+      </s:element>
+      <s:element name="ResetResponse">
+        <s:complexType />
+      </s:element>
+      <s:element name="Decrypted">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="name" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="DecryptedResponse">
+        <s:complexType />
+      </s:element>
     </s:schema>
   </wsdl:types>
   <wsdl:message name="GetPasswordListSoapIn">
@@ -92,6 +109,18 @@
   <wsdl:message name="LogResultsSoapOut">
     <wsdl:part name="parameters" element="tns:LogResultsResponse" />
   </wsdl:message>
+  <wsdl:message name="ResetSoapIn">
+    <wsdl:part name="parameters" element="tns:Reset" />
+  </wsdl:message>
+  <wsdl:message name="ResetSoapOut">
+    <wsdl:part name="parameters" element="tns:ResetResponse" />
+  </wsdl:message>
+  <wsdl:message name="DecryptedSoapIn">
+    <wsdl:part name="parameters" element="tns:Decrypted" />
+  </wsdl:message>
+  <wsdl:message name="DecryptedSoapOut">
+    <wsdl:part name="parameters" element="tns:DecryptedResponse" />
+  </wsdl:message>
   <wsdl:portType name="CrackerSoap">
     <wsdl:operation name="GetPasswordList">
       <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Get the list of usernames and encrypted passwords.</wsdl:documentation>
@@ -112,6 +141,16 @@
       <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Logs the username and password received from client in clear text.</wsdl:documentation>
       <wsdl:input message="tns:LogResultsSoapIn" />
       <wsdl:output message="tns:LogResultsSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="Reset">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Temporary method for resetting the dictionary chunks</wsdl:documentation>
+      <wsdl:input message="tns:ResetSoapIn" />
+      <wsdl:output message="tns:ResetSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="Decrypted">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Tells that the specific userInfo was decripted</wsdl:documentation>
+      <wsdl:input message="tns:DecryptedSoapIn" />
+      <wsdl:output message="tns:DecryptedSoapOut" />
     </wsdl:operation>
   </wsdl:portType>
   <wsdl:binding name="CrackerSoap" type="tns:CrackerSoap">
@@ -145,6 +184,24 @@
     </wsdl:operation>
     <wsdl:operation name="LogResults">
       <soap:operation soapAction="http://www.tempuri.org/LogResults" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="Reset">
+      <soap:operation soapAction="http://www.tempuri.org/Reset" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="Decrypted">
+      <soap:operation soapAction="http://www.tempuri.org/Decrypted" style="document" />
       <wsdl:input>
         <soap:body use="literal" />
       </wsdl:input>
@@ -191,13 +248,31 @@
         <soap12:body use="literal" />
       </wsdl:output>
     </wsdl:operation>
+    <wsdl:operation name="Reset">
+      <soap12:operation soapAction="http://www.tempuri.org/Reset" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="Decrypted">
+      <soap12:operation soapAction="http://www.tempuri.org/Decrypted" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
   </wsdl:binding>
   <wsdl:service name="Cracker">
     <wsdl:port name="CrackerSoap" binding="tns:CrackerSoap">
-      <soap:address location="http://localhost:40909/Cracker.asmx" />
+      <soap:address location="http://localhost:65080/Cracker.asmx" />
     </wsdl:port>
     <wsdl:port name="CrackerSoap12" binding="tns:CrackerSoap12">
-      <soap12:address location="http://localhost:40909/Cracker.asmx" />
+      <soap12:address location="http://localhost:65080/Cracker.asmx" />
     </wsdl:port>
   </wsdl:service>
 </wsdl:definitions>

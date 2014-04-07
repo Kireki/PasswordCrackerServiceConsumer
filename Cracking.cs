@@ -1,5 +1,5 @@
 ﻿using System.Collections.Concurrent;
-using System.Diagnostics;
+using System.Linq;
 using System.Threading.Tasks;
 using System;
 using System.Collections.Generic;
@@ -16,15 +16,14 @@ namespace PasswordCrackerServiceConsumer
         /// </summary>
         public void RunCracking()
         {
-            Stopwatch sw = new Stopwatch();
             Console.WriteLine("Started!");
-            sw.Start();
             CrackerSoapClient cracker = new CrackerSoapClient();
             Console.WriteLine("Initialized cracker web-service.");
             List<UserInfo> userInfos;
             try
             {
                 userInfos = cracker.GetPasswordList();
+                Console.WriteLine(userInfos.Count);
             }
             catch (Exception)
             {
@@ -45,24 +44,39 @@ namespace PasswordCrackerServiceConsumer
                 Console.WriteLine("\nGot a chunk: " + dictChunk.Count + ". First: " + dictChunk[0] + ", last: " + dictChunk[dictChunk.Count - 1]);
                 var partitions = Partitioner.Create(0, dictChunk.Count, 2000);
                 List<string> chunk = dictChunk;
+                List<UserInfo> infos = userInfos;
                 Parallel.ForEach(partitions, range =>
                 {
                     for (int i = range.Item1; i < range.Item2; i++)
                     {
                         processedWords[0]++;
-                        Console.Write("\r{0}% of words processed.", Math.Ceiling(processedWords[0]/chunk.Count * 100));
-                        IEnumerable<UserInfoClearText> partialResult = CheckWordWithVariations(chunk[i], userInfos);
-                        result.AddRange(partialResult);
+                        Console.Write("\r{0}% of the chunk processed.", Math.Ceiling(processedWords[0]/chunk.Count * 100));
+                        IEnumerable<UserInfoClearText> userInfoClearTexts = CheckWordWithVariations(chunk[i], infos);
+                        var partialResult = userInfoClearTexts as IList<UserInfoClearText> ?? userInfoClearTexts.ToList();
+                        if (partialResult.Any())
+                        {
+                            foreach (var infoClearText in partialResult)
+                            {
+                                cracker.Decrypted(infoClearText.UserName);
+                            }
+                            result.AddRange(partialResult);
+                            partialResult.Clear();
+                        }
+                        if (infos.Count == 0)
+                        {
+                            Console.WriteLine("All the passwords were decrypted.");
+                            return;
+                        }
                     }
                 });
                 processedWords[0] = 0;
-                Console.WriteLine("Done!");
+                Console.Write("\r                              ");
+                Console.Write("\rDone!");
                 dictChunk = cracker.GetDictionaryChunk();
+                userInfos = cracker.GetPasswordList();
             }
             cracker.LogResults(result);
             Console.WriteLine("No more chunks!");
-            sw.Stop();
-            Console.WriteLine("Time elapsed: {0}", sw.Elapsed);
         }
 
         /// <summary>
@@ -158,6 +172,7 @@ namespace PasswordCrackerServiceConsumer
                     Console.WriteLine("\nFound: " + userInfo.Username + " " + possiblePassword);
                 }
             }
+
             return results;
         }
 

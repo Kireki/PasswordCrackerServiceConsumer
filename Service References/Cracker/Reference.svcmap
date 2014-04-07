@@ -21,11 +21,11 @@
     <ServiceContractMappings />
   </ClientOptions>
   <MetadataSources>
-    <MetadataSource Address="http://localhost:40909/Cracker.asmx" Protocol="http" SourceId="1" />
+    <MetadataSource Address="http://localhost:65080/Cracker.asmx" Protocol="http" SourceId="1" />
   </MetadataSources>
   <Metadata>
-    <MetadataFile FileName="Cracker1.disco" MetadataType="Disco" ID="99d1d923-11f3-4ccb-a5c2-ab2332266c37" SourceId="1" SourceUrl="http://localhost:40909/Cracker.asmx?disco" />
-    <MetadataFile FileName="Cracker1.wsdl" MetadataType="Wsdl" ID="c01155b5-a22e-43dd-8c9f-76b5762806a1" SourceId="1" SourceUrl="http://localhost:40909/Cracker.asmx?wsdl" />
+    <MetadataFile FileName="Cracker.disco" MetadataType="Disco" ID="785a7c70-26ff-44d0-9a90-8fb55a370cc3" SourceId="1" SourceUrl="http://localhost:65080/Cracker.asmx?disco" />
+    <MetadataFile FileName="Cracker.wsdl" MetadataType="Wsdl" ID="5cbead7e-9ccd-4d56-862c-c9186176668e" SourceId="1" SourceUrl="http://localhost:65080/Cracker.asmx?wsdl" />
   </Metadata>
   <Extensions>
     <ExtensionFile FileName="configuration91.svcinfo" Name="configuration91.svcinfo" />
